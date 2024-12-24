@@ -16,35 +16,35 @@ import org.junit.jupiter.api.BeforeEach;
 
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import account.User;
 
-//@TestInstance(Lifecycle.PER_CLASS)
+@TestInstance(Lifecycle.PER_CLASS)
 public class UserTest {
 	
-	private static User testUser;
+	private User testUser;
 	
-	private static User ivan;
+	private User ivan;
 	
 	@BeforeAll
-	static void setUpForAllTests() {
+	void setUpForAllTests() {
 		ivan = new User();
 	}
 	
 	@AfterAll
-	static void deleteIvanAfterAllTests() {
+	void deleteIvanAfterAllTests() {
 		ivan = null;
 	}
 	
 	@BeforeEach
 	void setUp() {
-		// INSERT
 		testUser = new User("Ivan", "Petrov", "ivan.petrov@email.com");
 	}
 	
 	@AfterEach
 	void tearDown() {
-		// DELETE
 		testUser = null;
 	}
 

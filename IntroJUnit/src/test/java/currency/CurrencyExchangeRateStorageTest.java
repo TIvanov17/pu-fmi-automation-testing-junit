@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -87,6 +88,26 @@ public class CurrencyExchangeRateStorageTest {
 		
 		BigDecimal actualExchangeRate =
 				storage.getExchangeRate("TEST_FROM", "TEST_TO");
+		
+		assertEquals(new BigDecimal(exchangeRate), actualExchangeRate);
+	}
+	
+	@ParameterizedTest
+	@CsvSource({
+	    "TEST_FROM,         	 TEST_TO, 			1.1",
+	    "CURRENCY_CODE_1,        CURRENCY_CODE_2, 	0.2",
+	    "TEST_TO,         	 	 TEST_FROM, 		0.9",
+	    "CURRENCY_CODE_2,        CURRENCY_CODE_1, 	2.2",
+	})
+	void testAddExchangeRateFromParams(String currencyCodeFrom, String currencyCodeTo, String exchangeRate) {
+		storage.addExchangeRate(
+				currencyCodeFrom, 
+				currencyCodeTo, 
+				new BigDecimal(exchangeRate)
+		);
+		
+		BigDecimal actualExchangeRate =
+				storage.getExchangeRate(currencyCodeFrom, currencyCodeTo);
 		
 		assertEquals(new BigDecimal(exchangeRate), actualExchangeRate);
 	}
