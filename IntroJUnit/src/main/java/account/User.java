@@ -23,7 +23,15 @@ public class User {
 		this.createdOn = LocalDate.now();
 		this.accounts = new ArrayList<>();
 	}
+	
+	public User() {
+		
+	}
 
+	public User(String firstName) {
+		this.firstName = firstName;
+	}
+	
 	public String getFirstName() {
 		return firstName;
 	}

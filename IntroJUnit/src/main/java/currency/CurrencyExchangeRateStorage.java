@@ -8,6 +8,7 @@ import exceptions.GeneralApplicationException;
 
 public class CurrencyExchangeRateStorage {
 
+	// USD_EUR, 0.95
 	private Map<String, BigDecimal> exchangeRates;
 
 	private static CurrencyExchangeRateStorage instance;

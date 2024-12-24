@@ -14,7 +14,7 @@ public class CurrencyConverter {
 	public BigDecimal convert(BigDecimal amount, Currency currencyFrom, Currency currencyTo) {
 		BigDecimal exchangeRate = currencyExchangeRateStorage.getExchangeRate(currencyFrom.getCode(), currencyTo.getCode());
 		BigDecimal convertedAmount = amount.multiply(exchangeRate);
-		return convertedAmount;
+		return convertedAmount.setScale(2, RoundingMode.HALF_UP);
 	}
 
 }
