@@ -289,7 +289,7 @@ public class CurrencyFactoryTest {
 - използва method chaining за изграждане на проверките
 ``` java
 // основна структура:
-assertThat(expectedValue)
+assertThat(actualValue)
   	.assertMethod(value)
   	.anotherAssertMethod(anotherValue)
   	.thirdAssertMethod(thirdValue);`
@@ -324,7 +324,7 @@ void testSettersOfUserAssertJ() {
 - предоставя matcher-и (обекти, които дефинират условия за съвпадение) за извършване на assert-и в тестовете
 ``` java 
 // основна структура
-assertThat(expectedValue, matcher(value));
+assertThat(actualValue, matcher(value));
 ``` 
 
 Пример:
