@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: TaskManager
+
+  datasource:
+    url: jdbc:h2:file:./taskdb;NON_KEYWORDS=user
+    driver-class-name: org.h2.Driver
+    username: root
+    password: "1234"
+    initialization-mode: always
+  sql:
+    init:
+        mode: always
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
