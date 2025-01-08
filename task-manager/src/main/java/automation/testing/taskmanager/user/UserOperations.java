@@ -18,6 +18,10 @@ public class UserOperations {
 			return null;
 		}
 		
+		if(user.getLastName() == null || user.getLastName().isEmpty()) {
+			return null;
+		}
+		
 		User userWithEmail = userDBStorage.getUserByEmail(user.getEmail());
 		
 		if(userWithEmail != null) {
