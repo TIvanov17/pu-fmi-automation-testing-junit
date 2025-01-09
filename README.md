@@ -17,6 +17,13 @@
   	- **[8. `@ParameterizedTest`](#junit-5-param-test)**
      - **[9. `@Nested`](#junit-5-nested)**
   - **[AssertJ & Hamcrest](#junit-5-asserts)**
+- [Какво са Test Doubles](#test-doubles)
+  - [1. Dummy](#test-doubles-dummy)
+  - [2. Mock](#test-doubles-mock)
+  - [3. Stub](#test-doubles-stub)
+  - [4. Spy](#test-doubles-spy)
+  - [5. Fake](#test-doubles-fake)
+- [Създаване и използване на Test Doubles с Mockito](#mockito)
 - [Изпълнение на JUnit тест](#-изпълнение-на-junit-тест)
 
 ## * Какво е System Under Test (SUT) ?
@@ -347,6 +354,165 @@ void testSetterOfUserHarmcrest() {
 ```
 Повече инфо: https://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matchers.html
 
+<a id="test-doubles"></a>
+## * Какво са Test Doubles ?
+Когато клас не зависи от други класове, неговото тестване е доста ясно, но когато зависи от други класове имаме 2 избора:
+1. Да го тестваме заедно с другите класове
+2. Може да се опитаме да го изолираме от другите класове
+
+Test Doubles са обекти, използвани при тестване на софтуер, които заместват реални обекти. 
+Целта им е да изолират кода, който се тества, от външни зависимости (като бази данни, комуникация с външни системи и др.)
+и да осигурят предсказуемо и контролирано поведение по време на тестовете.
+
+### Видове:
+<a id="test-doubles-dummy"></a>
+#### 1. Dummy
+Обект, който не се използва реално, а съществува само, за да се подаде като аргументите на метод.
+(Пример: Името на User, което не се използва в тестването на имейла му.)
+<a id="test-doubles-mock"></a>
+#### 2. Mock 
+Обект, който дефинира очаквано поведение и проверява дали то е изпълнено. 
+(Пример: Проверка дали определен метод е извикан с определени аргументи.)
+<a id="test-doubles-stub"></a>
+#### 3. Stub
+Обект, който връща предварително зададени стойности, когато бъдат извикани неговите методи (без наистина да се изпълнят).
+(Пример: Метод, който винаги връща определено value, вместо да извършва реално действие и да върне value-то.)
+<a id="test-doubles-spy"></a>
+#### 4. Spy 
+Обект подобен на Stub, но освен че връща фиксирани стойности, също така записва какви методи са били извикани и с какви аргументи.
+(Пример: Тест проверява дали определен метод е извикан точно веднъж.)
+<a id="test-doubles-fake"></a>
+#### 5. Fake 
+Обект с реална имплементация, но опростена или оптимизирана. За разлика от Stub и Mock, той действително изпълнява някаква логика, но по по-лесен начин.
+
+<a id="mockito"></a>
+## * Създаване и използване на Test Doubles с Mockito ?
+Mockito е Java библиотека, използвана за създаване на mock/stub/spy обекти при писането на unit тестове.
+
+``` java
+// Библиотека:
+<dependency>
+    <groupId>org.mockito</groupId>
+    <artifactId>mockito-core</artifactId>
+</dependency>
+```
+
+* Активиране в тест класа:
+```java
+@ExtendWith(MockitoExtension.class)
+```
+или 
+``` java 
+@BeforeEach
+public void init() {
+   MockitoAnnotations.openMocks(this);
+}
+```
+
+#### Начини на създаване на mock обекти:
+```java 
+// 1.
+UserDBStorage userDBStorage = Mockito.mock(UserDBStorage.class);
+```
+```java
+// 2.
+@Mock private UserDBStorage userDBStorage;
+```
+
+Mock обектите са заместители на реални обекти, които имат предварително зададено поведение. 
+
+Когато Mockito създава mock не инициализира неговите променливи и връщат стойности по подразбиране. (null, 0, false и т.н.)
+Това не е реална инстанция на обекта, а е proxy/dummy обект, който симулира поведението на клас по време на тестване.
+Те се използват за изолиране на тестваната логика от реалните зависимости.
+
+Ключови характеристики:
+- Изцяло симулира обекта.
+- Методите му не изпълняват реална логика, освен ако не е зададено поведение с Mockito.when().
+- Използва се, когато искате пълно изолиране на тествания обект от неговите зависимости.
+
+#### Начини на създаване на spy обекти:
+```java
+// 1.
+UserDBStorage userDBStorage = Mockito.spy(new UserDBStorage());
+```
+```java
+// 2.
+@Spy private UserDBStorage userDBStorage;
+```
+Spy обектът е частично мокнат обект, който използва реалната имплементация на класа, освен ако не е зададено друго поведение чрез Mockito.when().
+С други думи, ако не се зададе поведение на даден метод, той ще извика реалния метод на оригиналния обект.
+
+Ключови характеристики:
+- Комбинира реална логика със симулирана.
+- Подходящ е, когато искате да тествате част от логиката на обекта, но да замените някои от зависимостите му с мокнати методи.
+- За разлика от mock, методите по подразбиране извикват реалната си логика, освен ако не е указано друго.
+
+#### Задаване на поведение:
+##### When/Then Концепция - Заместване резултат (поведение) / поставяне на очакване / stub-ване на метод:
+
+ - метод трябва да връща определен резултат:
+``` java
+when(userDBStorage.getUserById(1)).thenReturn(user);
+```
+``` java
+doReturn(user).when(userDBStorage).getUserById(1);
+```
+ - хвърляне на грешка:
+``` java
+when(listMock.add("test").thenThrow(IllegalStateException.class);
+```
+``` java
+doThrow(NullPointerException.class).when(listMock).clear();
+```
+ - множество извиквания:
+``` java
+when(userDBStorage.getUserByEmail("someEmail.com"))
+	.thenReturn(null) // Първи 1-вото извикване на метода
+	.thenReturn(mockedUser); // При 2-рото извикване на метода
+```
+
+#### Проверка на извиквания:
+- проверка, че даден mock се е използвал (метод е бил извикан)
+  ``` java verify(mockedList).size(); ```
+- проверка за брой извиквания
+  ``` java verify(mockedList, times(1)).size(); ```
+- проверка, че не се е извикал
+  ``` java verifyNoInteractions(mockedList); == verify(mockedList, times(0)).size(); ```
+- проверка за ред на извикване на методите
+``` java 
+  InOrder inOrder = Mockito.inOrder(mockedList);
+  inOrder.verify(mockedList).size();
+  inOrder.verify(mockedList).add("a parameter");
+  inOrder.verify(mockedList).clear();
+```
+ - метод никога не се извикал
+   ``` java verify(mockedList, never()).clear(); ```
+ - няколко пъти
+   ``` java verify(mockedList, atMost(10)).clear(); ```
+ - проверка на извикване с определен аргумент
+   ``` java verify(mockedList).add("test"); ```
+ - проверка с всеки аргумент
+   ``` java verify(mockedList).add(anyString()); ```
+
+#### `@InjectMocks`
+@InjectMocks е анотация, която автоматично създава обект на класа, който искате да тествате и 
+инжектира mock обектите (създадени с @Mock или @Spy) в неговите зависимости. 
+Това улеснява настройката на unit тестове, при които класът, който се тества, има зависимости, които трябва да бъдат симулирани.
+
+``` java
+// класа, който искаме да тестваме и да изолираме от неговите зависимости
+public class UserOperations {
+  // зависимост 1
+  private UserDBStorage userDBStorage;
+ ....
+}
+
+// създаване на mock или spy на зависимост 1
+@Mock private UserDBStorage userDBStorage;
+
+// добавяне на този mock обекта в класа, който искаме да тестваме 
+@InjectMocks private UserOperations userOperations;
+```
 
 ## * Изпълнение на JUnit тест
 ### Eclipse IDE: 
