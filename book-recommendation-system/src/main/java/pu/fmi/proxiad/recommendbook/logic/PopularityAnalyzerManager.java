@@ -33,8 +33,8 @@ public class PopularityAnalyzerManager {
 		}
 
 		// Сортираме книгите по брой заемания (descending)
-		allBooks.sort((b1, b2) -> borrowCount.get(b2) - borrowCount.get(b1));
-
-		return allBooks;
+		return libraryStorage.getAllBooks().stream()
+		        .sorted((b1, b2) -> borrowCount.get(b2) - borrowCount.get(b1))
+		        .toList();
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import pu.fmi.proxiad.recommendbook.model.Book;
 import pu.fmi.proxiad.recommendbook.storage.LibraryStorage;
 
+// BookService
 public class BookManager {
 
 	private final LibraryStorage libraryStorage;

@@ -21,6 +21,10 @@ public class RecommendationManager {
 		if (member == null) {
 			throw new IllegalArgumentException("Member cannot be null");
 		}
+		
+		if(member.getName() == null || member.getName().isBlank()) {
+			throw new IllegalStateException("Member's name cannot be empty");
+		}
 
 		if (member.getBorrowedBookIds() == null || member.getBorrowedBookIds().isEmpty()) {
 			return List.of();

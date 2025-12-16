@@ -1,6 +1,7 @@
 package pu.fmi.proxiad.recommendbook.logic;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -26,10 +27,16 @@ class MemberManagerTest {
 
 	@Test
 	void addMemberShouldCallToStorage() {
+		// 3 A:
+		
+		// Arrange 
 		Member member = new Member(1, "John", 14);
 
+		// Act
 		memberManager.addMember(member);
 
+		// Assert 
+		// начин за проверка (verification) дали даден метод е бил извикан точно определен брой пъти.
 		verify(libraryStorage, times(1)).saveMember(member);
 	}
 
@@ -42,6 +49,10 @@ class MemberManagerTest {
 
 		assertThat(result).isNotNull();
 		verify(libraryStorage, times(1)).findMemberById(1);
+		
+		assertEquals(1, result.getId());
+		assertEquals("John", result.getName());
+		assertEquals(14, result.getAge());
 	}
 
 }
